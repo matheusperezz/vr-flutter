@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:vr_application/_core/routes_names.dart';
-import 'package:vr_application/course/course_screen.dart';
+import 'package:vr_application/course/screens/course_screen.dart';
 
 import '../home/home_screen.dart';
 import '../student/student_screen.dart';

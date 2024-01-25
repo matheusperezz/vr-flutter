@@ -34,15 +34,15 @@ class _MyAppState extends State<MyApp> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     InkWell(
                       onTap: () {
                         Modular.to.navigate(AppRoutes.home);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
-                          'Home',
+                          'Início',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -51,10 +51,10 @@ class _MyAppState extends State<MyApp> {
                       onTap: () {
                         Modular.to.navigate(AppRoutes.student);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
-                          'Student',
+                          'Estudantes',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -63,10 +63,10 @@ class _MyAppState extends State<MyApp> {
                       onTap: () {
                         Modular.to.navigate(AppRoutes.course);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
-                          'Courses',
+                          'Cursos',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
