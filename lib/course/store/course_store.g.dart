@@ -33,6 +33,36 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     return _$fetchCoursesAsyncAction.run(() => super.fetchCourses());
   }
 
+  late final _$updateCourseAsyncAction =
+      AsyncAction('_CourseStoreBase.updateCourse', context: context);
+
+  @override
+  Future<void> updateCourse(Course course) {
+    return _$updateCourseAsyncAction.run(() => super.updateCourse(course));
+  }
+
+  late final _$fetchCourseByIdAsyncAction =
+      AsyncAction('_CourseStoreBase.fetchCourseById', context: context);
+
+  @override
+  Future<Course> fetchCourseById(String id) {
+    return _$fetchCourseByIdAsyncAction.run(() => super.fetchCourseById(id));
+  }
+
+  late final _$_CourseStoreBaseActionController =
+      ActionController(name: '_CourseStoreBase', context: context);
+
+  @override
+  void addStudent(String courseId, Student student) {
+    final _$actionInfo = _$_CourseStoreBaseActionController.startAction(
+        name: '_CourseStoreBase.addStudent');
+    try {
+      return super.addStudent(courseId, student);
+    } finally {
+      _$_CourseStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''

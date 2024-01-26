@@ -15,7 +15,15 @@ class Student {
     return Student(
       id: json['id'],
       name: json['name'],
-      courses: json['courses'].map((json) => Course.fromJson(json)).toList(),
+      courses: (json['courses'] as List).map((json) => Course.fromJson(json)).toList(),
     );
+  }
+
+  Object? toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'courses': courses.map((course) => course.toMap()).toList(),
+    };
   }
 }

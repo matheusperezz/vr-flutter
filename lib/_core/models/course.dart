@@ -4,41 +4,29 @@ class Course {
   final int id;
   final String description;
   final String syllabus;
-
-  Course({
-    required this.id,
-    required this.description,
-    required this.syllabus,
-  });
-
-  static Course fromJson(Map<String, dynamic> json) {
-    return Course(
-      id: json['ID'],
-      description: json['description'],
-      syllabus: json['syllabus'],
-    );
-  }
-}
-
-class CourseSpecific {
-  final int id;
-  final String description;
-  final String syllabus;
   final List<Student> students;
-
-  CourseSpecific({
+  Course({
     required this.id,
     required this.description,
     required this.syllabus,
     required this.students,
   });
 
-  static CourseSpecific fromJson(Map<String, dynamic> json) {
-    return CourseSpecific(
-      id: json['ID'],
+  static Course fromJson(Map<String, dynamic> json) {
+    return Course(
+      id: json['id'],
       description: json['description'],
       syllabus: json['syllabus'],
-      students: json['Students'].map((json) => Student.fromJson(json)).toList(),
+      students: (json['students'] as List<dynamic>).map((json) => Student.fromJson(json as Map<String, dynamic>)).toList(),
     );
+  }
+
+  Object? toMap() {
+    return {
+      'id': id,
+      'description': description,
+      'syllabus': syllabus,
+      'students': students.map((student) => student.toMap()).toList(),
+    };
   }
 }
