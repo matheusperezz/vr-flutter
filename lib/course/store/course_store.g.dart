@@ -81,6 +81,15 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     return _$fetchCourseByIdAsyncAction.run(() => super.fetchCourseById(id));
   }
 
+  late final _$addStudentAsyncAction =
+      AsyncAction('_CourseStoreBase.addStudent', context: context);
+
+  @override
+  Future<void> addStudent(String courseId, Student student) {
+    return _$addStudentAsyncAction
+        .run(() => super.addStudent(courseId, student));
+  }
+
   late final _$fetchStudentsAsyncAction =
       AsyncAction('_CourseStoreBase.fetchStudents', context: context);
 
@@ -96,20 +105,6 @@ mixin _$CourseStore on _CourseStoreBase, Store {
   Future<void> fetchAvailableStudents() {
     return _$fetchAvailableStudentsAsyncAction
         .run(() => super.fetchAvailableStudents());
-  }
-
-  late final _$_CourseStoreBaseActionController =
-      ActionController(name: '_CourseStoreBase', context: context);
-
-  @override
-  void addStudent(String courseId, Student student) {
-    final _$actionInfo = _$_CourseStoreBaseActionController.startAction(
-        name: '_CourseStoreBase.addStudent');
-    try {
-      return super.addStudent(courseId, student);
-    } finally {
-      _$_CourseStoreBaseActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

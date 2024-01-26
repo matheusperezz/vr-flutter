@@ -27,7 +27,9 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
   void initState() {
     super.initState();
     _courseFuture = _courseStore.fetchCourseById(widget.courseId);
-    _courseStore.fetchAvailableStudents();
+    _courseStore.fetchAvailableStudents().then((value) {
+      setState(() {});
+    });
   }
 
   @override
@@ -36,9 +38,6 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
         future: _courseFuture,
         builder: (BuildContext context, AsyncSnapshot<Course> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            for (var student in _courseStore.studentsAvailable) {
-              print('student: ${student.name}');
-            }
             _descriptionController.text = snapshot.data!.description;
             _syllabusController.text = snapshot.data!.syllabus;
             return Scaffold(
@@ -86,9 +85,7 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                     const SizedBox(height: 20),
                     TextField(
                       controller: _searchController,
-                      onChanged: (value) {
-
-                      },
+                      onChanged: (value) {},
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Pesquisar Alunos',
@@ -102,17 +99,20 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                           return ListTile(
                             title: Text(student.name),
                             onTap: () {
-
+                              _courseStore
+                                  .addStudent(
+                                    widget.courseId,
+                                    student,
+                                  )
+                                  .then((value) => setState(() {}));
                             },
                           );
                         },
                       ),
                     ),
-
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-
                         Modular.to.navigate(AppRoutes.course);
                       },
                       style: ElevatedButton.styleFrom(

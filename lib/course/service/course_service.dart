@@ -13,7 +13,8 @@ class CourseService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      List<Course> courses = data.map((json) => Course.fromJson(json)).cast<Course>().toList();
+      List<Course> courses =
+          data.map((json) => Course.fromJson(json)).cast<Course>().toList();
       return courses;
     } else {
       throw Exception('Falha ao carregar os cursos');
@@ -22,11 +23,8 @@ class CourseService {
 
   Future<Course> saveCourse(Course course) async {
     String jsonCourse = json.encode(course.toMap());
-    http.Response response = await http.post(
-        Uri.parse(API_URL),
-        body: jsonCourse,
-        headers: {'Content-Type': 'application/json'}
-    );
+    http.Response response = await http.post(Uri.parse(API_URL),
+        body: jsonCourse, headers: {'Content-Type': 'application/json'});
 
     return Course.fromJson(json.decode(response.body));
   }
@@ -46,7 +44,8 @@ class CourseService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
+      List<Student> students =
+          data.map((json) => Student.fromJson(json)).cast<Student>().toList();
       return students;
     } else {
       throw Exception('Falha ao carregar os estudantes');
@@ -54,29 +53,28 @@ class CourseService {
   }
 
   Future<List<Student>> fetchAvailableStudentsFromApi() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/students'));
+    final response =
+        await http.get(Uri.parse('http://localhost:8080/students'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      print('data: $data');
-      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
-      for (var student in students) {
-        print('student: ${student.id}  ${student.name}');
-      }
+      List<Student> students =
+          data.map((json) => Student.fromJson(json)).cast<Student>().toList();
       return students;
     } else {
       throw Exception('Falha ao carregar os estudantes');
     }
   }
 
-  void addStudentToCourse(String courseId, Student student) {
+  void addStudentToCourse(String courseId, Student student) async {
     int studentCode = student.id;
     int courseCode = int.parse(courseId);
-    Class studentCourse = Class(studentCode: studentCode, courseCode: courseCode);
+    Class studentCourse =
+        Class(studentCode: studentCode, courseCode: courseCode);
     String jsonStudent = json.encode(studentCourse.toMap());
-    http.post(
-        Uri.parse('http://localhost:8080/class'),
-        body: jsonStudent,
-        headers: {'Content-Type': 'application/json'}
-    );
+    final response = await http.post(Uri.parse('http://localhost:8080/class/'),
+        body: jsonStudent);
+    if (response.statusCode != 200) {
+      throw Exception('Falha ao adicionar o estudante ao curso');
+    }
   }
 }

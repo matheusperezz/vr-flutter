@@ -23,9 +23,6 @@ abstract class _CourseStoreBase with Store {
   @action
   Future<void> fetchCourses() async {
     final List<Course> fetchedCourses = await _courseService.fetchCourses();
-    for (var course in fetchedCourses) {
-      print('course: ${course.id}  ${course.description}');
-    }
     courses.clear();
     courses.addAll(fetchedCourses);
   }
@@ -43,8 +40,9 @@ abstract class _CourseStoreBase with Store {
   }
 
   @action
-  void addStudent(String courseId, Student student) {
+  Future<void> addStudent(String courseId, Student student) async {
     _courseService.addStudentToCourse(courseId, student);
+    fetchStudents(courseId);
   }
 
   @action
@@ -57,9 +55,6 @@ abstract class _CourseStoreBase with Store {
   @action
   Future<void> fetchAvailableStudents() async {
     final List<Student> fetchedStudents = await _courseService.fetchAvailableStudentsFromApi();
-    for (var student in fetchedStudents) {
-      print('student: ${student.id} ${student.name}');
-    }
     studentsAvailable.clear();
     studentsAvailable.addAll(fetchedStudents);
   }
