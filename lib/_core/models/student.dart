@@ -13,15 +13,19 @@ class Student {
 
   static Student fromJson(Map<String, dynamic> json) {
     return Student(
-      id: json['id'],
+      id: json['ID'],
       name: json['name'],
-      courses: (json['courses'] as List).map((json) => Course.fromJson(json)).toList(),
+      courses: json['courses'] != null
+          ? (json['courses'] as List<dynamic>)
+              .map((json) => Course.fromJson(json as Map<String, dynamic>))
+              .toList()
+          : [],
     );
   }
 
   Object? toMap() {
     return {
-      'id': id,
+      'ID': id,
       'name': name,
       'courses': courses.map((course) => course.toMap()).toList(),
     };

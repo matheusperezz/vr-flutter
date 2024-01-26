@@ -25,6 +25,38 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     });
   }
 
+  late final _$studentsAtom =
+      Atom(name: '_CourseStoreBase.students', context: context);
+
+  @override
+  List<Student> get students {
+    _$studentsAtom.reportRead();
+    return super.students;
+  }
+
+  @override
+  set students(List<Student> value) {
+    _$studentsAtom.reportWrite(value, super.students, () {
+      super.students = value;
+    });
+  }
+
+  late final _$studentsAvailableAtom =
+      Atom(name: '_CourseStoreBase.studentsAvailable', context: context);
+
+  @override
+  List<Student> get studentsAvailable {
+    _$studentsAvailableAtom.reportRead();
+    return super.studentsAvailable;
+  }
+
+  @override
+  set studentsAvailable(List<Student> value) {
+    _$studentsAvailableAtom.reportWrite(value, super.studentsAvailable, () {
+      super.studentsAvailable = value;
+    });
+  }
+
   late final _$fetchCoursesAsyncAction =
       AsyncAction('_CourseStoreBase.fetchCourses', context: context);
 
@@ -49,6 +81,23 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     return _$fetchCourseByIdAsyncAction.run(() => super.fetchCourseById(id));
   }
 
+  late final _$fetchStudentsAsyncAction =
+      AsyncAction('_CourseStoreBase.fetchStudents', context: context);
+
+  @override
+  Future<void> fetchStudents(String courseId) {
+    return _$fetchStudentsAsyncAction.run(() => super.fetchStudents(courseId));
+  }
+
+  late final _$fetchAvailableStudentsAsyncAction =
+      AsyncAction('_CourseStoreBase.fetchAvailableStudents', context: context);
+
+  @override
+  Future<void> fetchAvailableStudents() {
+    return _$fetchAvailableStudentsAsyncAction
+        .run(() => super.fetchAvailableStudents());
+  }
+
   late final _$_CourseStoreBaseActionController =
       ActionController(name: '_CourseStoreBase', context: context);
 
@@ -66,7 +115,9 @@ mixin _$CourseStore on _CourseStoreBase, Store {
   @override
   String toString() {
     return '''
-courses: ${courses}
+courses: ${courses},
+students: ${students},
+studentsAvailable: ${studentsAvailable}
     ''';
   }
 }

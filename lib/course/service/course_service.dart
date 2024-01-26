@@ -1,4 +1,6 @@
 import 'package:http/http.dart' as http;
+import 'package:vr_application/_core/models/class.dart';
+import 'package:vr_application/_core/models/student.dart';
 import 'dart:convert';
 
 import '../../_core/models/course.dart';
@@ -37,5 +39,44 @@ class CourseService {
     } else {
       throw Exception('Falha ao carregar o curso');
     }
+  }
+
+  Future<List<Student>> fetchStudentsFromApi(String courseId) async {
+    final response = await http.get(Uri.parse('$API_URL/$courseId/students'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
+      return students;
+    } else {
+      throw Exception('Falha ao carregar os estudantes');
+    }
+  }
+
+  Future<List<Student>> fetchAvailableStudentsFromApi() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/students'));
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      print('data: $data');
+      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
+      for (var student in students) {
+        print('student: ${student.id}  ${student.name}');
+      }
+      return students;
+    } else {
+      throw Exception('Falha ao carregar os estudantes');
+    }
+  }
+
+  void addStudentToCourse(String courseId, Student student) {
+    int studentCode = student.id;
+    int courseCode = int.parse(courseId);
+    Class studentCourse = Class(studentCode: studentCode, courseCode: courseCode);
+    String jsonStudent = json.encode(studentCourse.toMap());
+    http.post(
+        Uri.parse('http://localhost:8080/class'),
+        body: jsonStudent,
+        headers: {'Content-Type': 'application/json'}
+    );
   }
 }

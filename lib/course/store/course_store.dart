@@ -14,9 +14,18 @@ abstract class _CourseStoreBase with Store {
   @observable
   List<Course> courses = ObservableList<Course>();
 
+  @observable
+  List<Student> students = ObservableList<Student>();
+
+  @observable
+  List<Student> studentsAvailable = ObservableList<Student>();
+
   @action
   Future<void> fetchCourses() async {
     final List<Course> fetchedCourses = await _courseService.fetchCourses();
+    for (var course in fetchedCourses) {
+      print('course: ${course.id}  ${course.description}');
+    }
     courses.clear();
     courses.addAll(fetchedCourses);
   }
@@ -35,9 +44,23 @@ abstract class _CourseStoreBase with Store {
 
   @action
   void addStudent(String courseId, Student student) {
-    final courseIndex = courses.indexWhere((course) => course.id == courseId);
-    if (courseIndex != -1) {
-      courses[courseIndex].students.add(student);
+    _courseService.addStudentToCourse(courseId, student);
+  }
+
+  @action
+  Future<void> fetchStudents(String courseId) async {
+    final List<Student> fetchedStudents = await _courseService.fetchStudentsFromApi(courseId);
+    students.clear();
+    students.addAll(fetchedStudents);
+  }
+
+  @action
+  Future<void> fetchAvailableStudents() async {
+    final List<Student> fetchedStudents = await _courseService.fetchAvailableStudentsFromApi();
+    for (var student in fetchedStudents) {
+      print('student: ${student.id} ${student.name}');
     }
+    studentsAvailable.clear();
+    studentsAvailable.addAll(fetchedStudents);
   }
 }
