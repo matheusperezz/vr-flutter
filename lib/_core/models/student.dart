@@ -1,9 +1,9 @@
 import 'course.dart';
 
 class Student {
-  final int id;
-  final String name;
-  final List<Course> courses;
+  int id;
+  String name;
+  List<Course> courses;
 
   Student({
     required this.id,

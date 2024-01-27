@@ -29,7 +29,7 @@ abstract class _CourseStoreBase with Store {
 
   @action
   Future<void> updateCourse(Course course) async {
-    await _courseService.saveCourse(course);
+    await _courseService.updateCourse(course);
     fetchCourses();
   }
 
@@ -46,6 +46,12 @@ abstract class _CourseStoreBase with Store {
   }
 
   @action
+  Future<void> saveCourse(CreateCourseDTO course) async {
+    await _courseService.saveCourse(course);
+    fetchCourses();
+  }
+
+  @action
   Future<void> fetchStudents(String courseId) async {
     final List<Student> fetchedStudents = await _courseService.fetchStudentsFromApi(courseId);
     students.clear();
@@ -57,5 +63,11 @@ abstract class _CourseStoreBase with Store {
     final List<Student> fetchedStudents = await _courseService.fetchAvailableStudentsFromApi();
     studentsAvailable.clear();
     studentsAvailable.addAll(fetchedStudents);
+  }
+
+  @action
+  Future<void> removeStudent(String courseId, Student student) async {
+    _courseService.removeStudentFromCourse(courseId, student);
+    fetchStudents(courseId);
   }
 }

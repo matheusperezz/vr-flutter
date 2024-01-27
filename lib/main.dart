@@ -4,6 +4,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:vr_application/_core/routes_names.dart';
 import 'modules/app_module.dart';
 
+// TODO: Remover os Cursos da lista de cursos
+// TODO: Implementar a parte de Estudantes
+
 void main() {
   return runApp(ModularApp(module: AppModule(), child: MyApp(),));
 }

@@ -21,12 +21,20 @@ class CourseService {
     }
   }
 
-  Future<Course> saveCourse(Course course) async {
+  Future<void> saveCourse(CreateCourseDTO course) async {
     String jsonCourse = json.encode(course.toMap());
-    http.Response response = await http.post(Uri.parse(API_URL),
+    http.Response response = await http.post(Uri.parse('$API_URL/'),
         body: jsonCourse, headers: {'Content-Type': 'application/json'});
+    print('Course: $jsonCourse');
+    if (response.statusCode != 201) {
+      throw Exception('Falha ao salvar o curso');
+    }
+  }
 
-    return Course.fromJson(json.decode(response.body));
+  Future<void> updateCourse(Course course) async {
+    String jsonCourse = json.encode(course.toMap());
+    http.put(Uri.parse('${API_URL}/${course.id}'),
+        body: jsonCourse, headers: {'Content-Type': 'application/json'});
   }
 
   Future<Course> fetchCourseById(String id) async {
@@ -75,6 +83,18 @@ class CourseService {
         body: jsonStudent);
     if (response.statusCode != 200) {
       throw Exception('Falha ao adicionar o estudante ao curso');
+    }
+  }
+
+  Future<void> removeStudentFromCourse(String courseId, Student student) async {
+    final Class studentCourse = Class(
+        studentCode: student.id, courseCode: int.parse(courseId));
+    String jsonClass = json.encode(studentCourse.toMap());
+    print('Class: $jsonClass');
+    final response = await http.delete(
+        Uri.parse('http://localhost:8080/class/'), body: jsonClass);
+    if (response.statusCode != 200) {
+      throw Exception('Falha ao remover o estudante do curso');
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:vr_application/_core/models/student.dart';
 
 class Course {
-  final int id;
-  final String description;
-  final String syllabus;
-  final List<Student> students;
+  int id;
+  String description;
+  String syllabus;
+  List<Student> students;
   Course({
     required this.id,
     required this.description,
@@ -29,6 +29,30 @@ class Course {
       'description': description,
       'syllabus': syllabus,
       'students': students.map((student) => student.toMap()).toList(),
+    };
+  }
+}
+
+class CreateCourseDTO {
+  String description;
+  String syllabus;
+
+  CreateCourseDTO({
+    required this.description,
+    required this.syllabus,
+  });
+
+  static CreateCourseDTO fromJson(Map<String, dynamic> json) {
+    return CreateCourseDTO(
+      description: json['description'],
+      syllabus: json['syllabus'],
+    );
+  }
+
+  Object? toMap() {
+    return {
+      'description': description,
+      'syllabus': syllabus,
     };
   }
 }

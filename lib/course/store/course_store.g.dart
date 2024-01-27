@@ -90,6 +90,14 @@ mixin _$CourseStore on _CourseStoreBase, Store {
         .run(() => super.addStudent(courseId, student));
   }
 
+  late final _$saveCourseAsyncAction =
+      AsyncAction('_CourseStoreBase.saveCourse', context: context);
+
+  @override
+  Future<void> saveCourse(CreateCourseDTO course) {
+    return _$saveCourseAsyncAction.run(() => super.saveCourse(course));
+  }
+
   late final _$fetchStudentsAsyncAction =
       AsyncAction('_CourseStoreBase.fetchStudents', context: context);
 
@@ -105,6 +113,15 @@ mixin _$CourseStore on _CourseStoreBase, Store {
   Future<void> fetchAvailableStudents() {
     return _$fetchAvailableStudentsAsyncAction
         .run(() => super.fetchAvailableStudents());
+  }
+
+  late final _$removeStudentAsyncAction =
+      AsyncAction('_CourseStoreBase.removeStudent', context: context);
+
+  @override
+  Future<void> removeStudent(String courseId, Student student) {
+    return _$removeStudentAsyncAction
+        .run(() => super.removeStudent(courseId, student));
   }
 
   @override

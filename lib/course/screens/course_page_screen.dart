@@ -22,6 +22,7 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
   TextEditingController _searchController = TextEditingController();
   final CourseStore _courseStore = CourseStore();
   late Future<Course> _courseFuture;
+  late Course _course;
 
   @override
   void initState() {
@@ -38,11 +39,18 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
         future: _courseFuture,
         builder: (BuildContext context, AsyncSnapshot<Course> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            _descriptionController.text = snapshot.data!.description;
-            _syllabusController.text = snapshot.data!.syllabus;
+            _course = snapshot.data!;
+            _descriptionController.text = _course.description;
+            _syllabusController.text = _course.syllabus;
+            _descriptionController.addListener(() {
+              _course.description = _descriptionController.text;
+            });
+            _syllabusController.addListener(() {
+              _course.syllabus = _syllabusController.text;
+            });
             return Scaffold(
               appBar: AppBar(
-                  title: Text(snapshot.data!.description),
+                  title: Text(_course.description),
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
@@ -73,11 +81,17 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                     const Text('Alunos matriculados neste curso'),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: snapshot.data!.students.length,
+                        itemCount: _course.students.length,
                         itemBuilder: (context, index) {
-                          final student = snapshot.data!.students[index];
+                          final student = _course.students[index];
                           return ListTile(
                             title: Text(student.name),
+                            onTap: () {
+                              _courseStore.removeStudent(
+                                widget.courseId,
+                                student,
+                              );
+                            },
                           );
                         },
                       ),
@@ -99,12 +113,10 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                           return ListTile(
                             title: Text(student.name),
                             onTap: () {
-                              _courseStore
-                                  .addStudent(
-                                    widget.courseId,
-                                    student,
-                                  )
-                                  .then((value) => setState(() {}));
+                              _courseStore.addStudent(
+                                widget.courseId,
+                                student,
+                              );
                             },
                           );
                         },
@@ -113,7 +125,9 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        Modular.to.navigate(AppRoutes.course);
+                        _courseStore.updateCourse(_course).then((_) {
+                          Modular.to.navigate(AppRoutes.course);
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.deepPurple,
