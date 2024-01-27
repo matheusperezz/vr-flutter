@@ -3,7 +3,6 @@ import 'package:vr_application/_core/models/course.dart';
 import 'package:vr_application/_core/routes_names.dart';
 import 'package:vr_application/course/store/course_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:vr_application/course/widgets/student_list.dart';
 
 import '../../_core/models/student.dart';
 

@@ -1,15 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'package:vr_application/_core/models/class.dart';
 import 'package:vr_application/_core/models/student.dart';
+import 'package:vr_application/_core/network/endpoints.dart';
 import 'dart:convert';
 
 import '../../_core/models/course.dart';
 
-const String API_URL = 'http://localhost:8080/courses';
-
 class CourseService {
   Future<List<Course>> fetchCourses() async {
-    final response = await http.get(Uri.parse(API_URL));
+    final response = await http.get(Uri.parse(Endpoints.baseUrl + Endpoints.courses));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -23,7 +22,7 @@ class CourseService {
 
   Future<void> saveCourse(CreateCourseDTO course) async {
     String jsonCourse = json.encode(course.toMap());
-    http.Response response = await http.post(Uri.parse('$API_URL/'),
+    http.Response response = await http.post(Uri.parse(Endpoints.getCourseEndPoint()),
         body: jsonCourse, headers: {'Content-Type': 'application/json'});
     print('Course: $jsonCourse');
     if (response.statusCode != 201) {
@@ -33,12 +32,12 @@ class CourseService {
 
   Future<void> updateCourse(Course course) async {
     String jsonCourse = json.encode(course.toMap());
-    http.put(Uri.parse('${API_URL}/${course.id}'),
+    http.put(Uri.parse('${Endpoints.getCourseEndPoint()}/${course.id}'),
         body: jsonCourse, headers: {'Content-Type': 'application/json'});
   }
 
   Future<Course> fetchCourseById(String id) async {
-    final response = await http.get(Uri.parse('$API_URL/$id'));
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$id'));
 
     if (response.statusCode == 200) {
       return Course.fromJson(json.decode(response.body));
@@ -48,7 +47,7 @@ class CourseService {
   }
 
   Future<List<Student>> fetchStudentsFromApi(String courseId) async {
-    final response = await http.get(Uri.parse('$API_URL/$courseId/students'));
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$courseId/students'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -62,7 +61,7 @@ class CourseService {
 
   Future<List<Student>> fetchAvailableStudentsFromApi() async {
     final response =
-        await http.get(Uri.parse('http://localhost:8080/students'));
+        await http.get(Uri.parse(Endpoints.getStudentEndPoint()));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       List<Student> students =
@@ -79,11 +78,12 @@ class CourseService {
     Class studentCourse =
         Class(studentCode: studentCode, courseCode: courseCode);
     String jsonStudent = json.encode(studentCourse.toMap());
-    final response = await http.post(Uri.parse('http://localhost:8080/class/'),
+    final response = await http.post(Uri.parse(Endpoints.getCourseStudentEndPoint()),
         body: jsonStudent);
     if (response.statusCode != 200) {
       throw Exception('Falha ao adicionar o estudante ao curso');
     }
+    fetchStudentsFromApi(courseId);
   }
 
   Future<void> removeStudentFromCourse(String courseId, Student student) async {
@@ -92,9 +92,10 @@ class CourseService {
     String jsonClass = json.encode(studentCourse.toMap());
     print('Class: $jsonClass');
     final response = await http.delete(
-        Uri.parse('http://localhost:8080/class/'), body: jsonClass);
+        Uri.parse(Endpoints.getCourseStudentEndPoint()), body: jsonClass);
     if (response.statusCode != 200) {
       throw Exception('Falha ao remover o estudante do curso');
     }
+    fetchStudentsFromApi(courseId);
   }
 }

@@ -5,7 +5,7 @@ import 'package:vr_application/course/screens/create_course.dart';
 
 import '../course/screens/course_page_screen.dart';
 import '../home/home_screen.dart';
-import '../student/student_screen.dart';
+import '../student/screens/student_screen.dart';
 
 class AppModule extends Module {
   @override

@@ -3,7 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../_core/routes_names.dart';
 import '../course/screens/course_screen.dart';
 import '../home/home_screen.dart';
-import '../student/student_screen.dart';
+import '../student/screens/student_screen.dart';
 
 class HomeModule extends Module {
   @override
