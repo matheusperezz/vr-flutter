@@ -31,3 +31,23 @@ class Student {
     };
   }
 }
+
+class StudentDto {
+  String name;
+
+  StudentDto({
+    required this.name,
+  });
+
+  Object? toMap() {
+    return {
+      'name': name,
+    };
+  }
+
+  static StudentDto fromJson(Map<String, dynamic> json) {
+    return StudentDto(
+      name: json['name'],
+    );
+  }
+}

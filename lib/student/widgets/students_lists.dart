@@ -41,9 +41,7 @@ class _StudentListWidgetState extends State<StudentListWidget> {
                   title: Text(student.name),
                   subtitle: Text('Certamente um aluno'),
                   onTap: () {
-                    for (var course in student.courses) {
-                      print('Student id: ${student.id} course id: ${course.id} course description: ${course.description}');
-                    }
+                    Modular.to.navigate('${AppRoutes.student}/${student.id}');
                   });
             },
           );

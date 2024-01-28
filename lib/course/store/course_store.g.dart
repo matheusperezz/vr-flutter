@@ -124,6 +124,23 @@ mixin _$CourseStore on _CourseStoreBase, Store {
         .run(() => super.removeStudent(courseId, student));
   }
 
+  late final _$removeCourseAsyncAction =
+      AsyncAction('_CourseStoreBase.removeCourse', context: context);
+
+  @override
+  Future<void> removeCourse(String id) {
+    return _$removeCourseAsyncAction.run(() => super.removeCourse(id));
+  }
+
+  late final _$fetchStudentCoursesAsyncAction =
+      AsyncAction('_CourseStoreBase.fetchStudentCourses', context: context);
+
+  @override
+  Future<int> fetchStudentCourses(String courseId) {
+    return _$fetchStudentCoursesAsyncAction
+        .run(() => super.fetchStudentCourses(courseId));
+  }
+
   @override
   String toString() {
     return '''

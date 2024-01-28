@@ -25,6 +25,22 @@ mixin _$StudentStore on _StudentStoreBase, Store {
     });
   }
 
+  late final _$coursesAtom =
+      Atom(name: '_StudentStoreBase.courses', context: context);
+
+  @override
+  List<Course> get courses {
+    _$coursesAtom.reportRead();
+    return super.courses;
+  }
+
+  @override
+  set courses(List<Course> value) {
+    _$coursesAtom.reportWrite(value, super.courses, () {
+      super.courses = value;
+    });
+  }
+
   late final _$fetchStudentsAsyncAction =
       AsyncAction('_StudentStoreBase.fetchStudents', context: context);
 
@@ -33,10 +49,51 @@ mixin _$StudentStore on _StudentStoreBase, Store {
     return _$fetchStudentsAsyncAction.run(() => super.fetchStudents());
   }
 
+  late final _$saveStudentAsyncAction =
+      AsyncAction('_StudentStoreBase.saveStudent', context: context);
+
+  @override
+  Future<void> saveStudent(StudentDto student) {
+    return _$saveStudentAsyncAction.run(() => super.saveStudent(student));
+  }
+
+  late final _$updateStudentAsyncAction =
+      AsyncAction('_StudentStoreBase.updateStudent', context: context);
+
+  @override
+  Future<void> updateStudent(Student student) {
+    return _$updateStudentAsyncAction.run(() => super.updateStudent(student));
+  }
+
+  late final _$fetchStudentByIdAsyncAction =
+      AsyncAction('_StudentStoreBase.fetchStudentById', context: context);
+
+  @override
+  Future<Student> fetchStudentById(String id) {
+    return _$fetchStudentByIdAsyncAction.run(() => super.fetchStudentById(id));
+  }
+
+  late final _$deleteStudentAsyncAction =
+      AsyncAction('_StudentStoreBase.deleteStudent', context: context);
+
+  @override
+  Future<void> deleteStudent(String id) {
+    return _$deleteStudentAsyncAction.run(() => super.deleteStudent(id));
+  }
+
+  late final _$fetchCoursesAsyncAction =
+      AsyncAction('_StudentStoreBase.fetchCourses', context: context);
+
+  @override
+  Future<void> fetchCourses() {
+    return _$fetchCoursesAsyncAction.run(() => super.fetchCourses());
+  }
+
   @override
   String toString() {
     return '''
-students: ${students}
+students: ${students},
+courses: ${courses}
     ''';
   }
 }

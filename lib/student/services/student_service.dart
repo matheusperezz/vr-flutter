@@ -3,6 +3,8 @@ import 'package:vr_application/_core/models/student.dart';
 import 'package:vr_application/_core/network/endpoints.dart';
 import 'dart:convert';
 
+import '../../_core/models/course.dart';
+
 class StudentService {
   Future<List<Student>> fetchStudents() async {
     final response =
@@ -18,10 +20,10 @@ class StudentService {
     }
   }
 
-  Future<void> saveStudent(Student student) async {
+  Future<void> saveStudent(StudentDto student) async {
     String jsonStudent = json.encode(student.toMap());
     http.Response response = await http.post(
-        Uri.parse(Endpoints.getStudentEndPoint()),
+        Uri.parse(Endpoints.getStudentEndPoint() + '/'),
         body: jsonStudent,
         headers: {'Content-Type': 'application/json'});
     print('Student: $jsonStudent');
@@ -53,6 +55,17 @@ class StudentService {
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao deletar o estudante');
+    }
+  }
+
+  Future<List<Course>> fetchAvailableCoursesFromApi() async {
+    final response = await http.get(Uri.parse(Endpoints.getCourseEndPoint()));
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = jsonDecode(response.body);
+      final List<Course> courses = responseData.map((data) => Course.fromJson(data)).toList();
+      return courses;
+    } else {
+      throw Exception('Failed to load courses');
     }
   }
 }
