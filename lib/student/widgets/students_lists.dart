@@ -15,6 +15,7 @@ class StudentListWidget extends StatefulWidget {
 
 class _StudentListWidgetState extends State<StudentListWidget> {
   final StudentStore _studentStore = StudentStore();
+  String _searchText = '';
 
   @override
   void initState() {
@@ -25,27 +26,74 @@ class _StudentListWidgetState extends State<StudentListWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Observer(
-        builder: (BuildContext context) {
-          if (_studentStore.students.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchText = value;
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Buscar aluno',
+              ),
+            ),
+          ),
+          Expanded(
+            child: Observer(
+              builder: (BuildContext context) {
+                if (_studentStore.students.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-          return ListView.builder(
-            itemCount: _studentStore.students.length,
-            itemBuilder: (BuildContext context, int index) {
-              final student = _studentStore.students[index];
-              return ListTile(
-                  title: Text(student.name),
-                  subtitle: Text('Certamente um aluno'),
-                  onTap: () {
-                    Modular.to.navigate('${AppRoutes.student}/${student.id}');
+                final filteredStudents = _studentStore.students.where((student) {
+                  if (_searchText.isEmpty) {
+                    return true;
+                  }
+
+                  final searchTextWords = _searchText
+                      .toLowerCase()
+                      .replaceAll(new RegExp(r'[^\w\s]+'), '')
+                      .split(' ');
+
+                  final studentNameWords = student.name
+                      .toLowerCase()
+                      .replaceAll(new RegExp(r'[^\w\s]+'), '')
+                      .split(' ');
+
+                  return searchTextWords.every((word) {
+                    return studentNameWords.any((studentWord) {
+                      return studentWord.contains(word);
+                    });
                   });
-            },
-          );
-        },
+                }).toList();
+
+                if (filteredStudents.isEmpty) {
+                  return const Center(
+                    child: Text('Nenhum registro foi encontrado'),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: filteredStudents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final student = filteredStudents[index];
+                    return ListTile(
+                        title: Text(student.name),
+                        subtitle: Text('Certamente um aluno'),
+                        onTap: () {
+                          Modular.to.navigate('${AppRoutes.student}/${student.id}');
+                        });
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

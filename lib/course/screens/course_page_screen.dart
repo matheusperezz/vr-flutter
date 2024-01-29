@@ -82,54 +82,7 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text('Alunos matriculados neste curso'),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _course.students.length,
-                      itemBuilder: (context, index) {
-                        final student = _course.students[index];
-                        return ListTile(
-                            title: Text(student.name),
-                            onLongPress: () async {
-                              try {
-                                // make an alert dialog
-                                await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Remover aluno'),
-                                      content: Text(
-                                        'Deseja remover o aluno ${student.name} do curso?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Modular.to.pop();
-                                          },
-                                          child: const Text('Cancelar'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            Modular.to.pop();
-                                            await _courseStore.removeStudent(widget.courseId, student);
-                                            List<Student> students = await _courseStore.fetchStudentsFromCourse(widget.courseId);
-                                            setState(() {
-                                              _course.students = students;
-                                            });
-                                          },
-                                          child: const Text('Remover'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              } catch (e) {
-                                // TODO: Make an toast with error message
-                                print('Error: $e');
-                              }
-                            });
-                      },
-                    ),
-                  ),
+                  studentsInThisCourseList(),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _searchController,
@@ -139,62 +92,9 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                       labelText: 'Pesquisar Alunos',
                     ),
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _courseStore.studentsAvailable.length,
-                      itemBuilder: (context, index) {
-                        final student = _courseStore.studentsAvailable[index];
-                        return ListTile(
-                          title: Text(student.name),
-                          onTap: () async {
-                            try {
-                              await _courseStore.addStudent(widget.courseId, student);
-                              List<Student> students = await _courseStore.fetchStudentsFromCourse(widget.courseId);
-                              setState(() {
-                                _course.students = students;
-                              });
-                            } catch (e) {
-                              print('Error: $e');
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                  availableStudentList(),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _courseStore.updateCourse(_course).then((_) {
-                            // Print all navigation stack
-                            Modular.to.navigate(AppRoutes.course);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.deepPurple,
-                          onPrimary: Colors.white,
-                        ),
-                        child: const Text('Atualizar curso'),
-                      ),
-                      const SizedBox(width: 18),
-                      ElevatedButton(
-                        onPressed: () {
-                          _courseStore
-                              .removeCourse(_course.id.toString())
-                              .then((_) {
-                            Modular.to.pop();
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          onPrimary: Colors.white,
-                        ),
-                        child: const Text('Deletar curso'),
-                      ),
-                    ],
-                  )
+                  buildUpdateAndDeleteButtons()
                 ],
               ),
             ),
@@ -206,6 +106,119 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
           child: CircularProgressIndicator(),
         );
       },
+    );
+  }
+
+  Expanded studentsInThisCourseList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _course.students.length,
+        itemBuilder: (context, index) {
+          final student = _course.students[index];
+          return ListTile(
+              title: Text(student.name),
+              onLongPress: () async {
+                try {
+                  // make an alert dialog
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Remover aluno'),
+                        content: Text(
+                          'Deseja remover o aluno ${student.name} do curso?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Modular.to.pop();
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Modular.to.pop();
+                              await _courseStore.removeStudent(
+                                  widget.courseId, student);
+                              List<Student> students = await _courseStore
+                                  .fetchStudentsFromCourse(widget.courseId);
+                              setState(() {
+                                _course.students = students;
+                              });
+                            },
+                            child: const Text('Remover'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } catch (e) {
+                  // TODO: Make an toast with error message
+                  print('Error: $e');
+                }
+              });
+        },
+      ),
+    );
+  }
+
+  Expanded availableStudentList() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _courseStore.studentsAvailable.length,
+        itemBuilder: (context, index) {
+          final student = _courseStore.studentsAvailable[index];
+          return ListTile(
+            title: Text(student.name),
+            onTap: () async {
+              try {
+                await _courseStore.addStudent(widget.courseId, student);
+                List<Student> students =
+                    await _courseStore.fetchStudentsFromCourse(widget.courseId);
+                setState(() {
+                  _course.students = students;
+                });
+              } catch (e) {
+                print('Error: $e');
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Row buildUpdateAndDeleteButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _courseStore.updateCourse(_course).then((_) {
+              // Print all navigation stack
+              Modular.to.navigate(AppRoutes.course);
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.deepPurple,
+            onPrimary: Colors.white,
+          ),
+          child: const Text('Atualizar curso'),
+        ),
+        const SizedBox(width: 18),
+        ElevatedButton(
+          onPressed: () {
+            _courseStore.removeCourse(_course.id.toString()).then((_) {
+              Modular.to.pop();
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.red,
+            onPrimary: Colors.white,
+          ),
+          child: const Text('Deletar curso'),
+        ),
+      ],
     );
   }
 }
