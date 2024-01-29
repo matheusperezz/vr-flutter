@@ -153,7 +153,6 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                               setState(() {
                                 _course.students = students;
                               });
-                              Modular.to.pop();
                             } catch (e) {
                               print('Error: $e');
                             }
@@ -169,9 +168,8 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                       ElevatedButton(
                         onPressed: () {
                           _courseStore.updateCourse(_course).then((_) {
-                            Future.delayed(Duration.zero, () {
-                              Modular.to.pushReplacementNamed(AppRoutes.course);
-                            });
+                            // Print all navigation stack
+                            Modular.to.navigate(AppRoutes.course);
                           });
                         },
                         style: ElevatedButton.styleFrom(

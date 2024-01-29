@@ -24,7 +24,6 @@ class CourseService {
     String jsonCourse = json.encode(course.toMap());
     http.Response response = await http.post(Uri.parse(Endpoints.getCourseEndPoint()),
         body: jsonCourse, headers: {'Content-Type': 'application/json'});
-    print('Course: $jsonCourse');
     if (response.statusCode != 201) {
       throw Exception('Falha ao salvar o curso');
     }
@@ -37,7 +36,7 @@ class CourseService {
   }
 
   Future<Course> fetchCourseById(String id) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$id'));
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$id'));
 
     if (response.statusCode == 200) {
       return Course.fromJson(json.decode(response.body));
@@ -47,7 +46,7 @@ class CourseService {
   }
 
   Future<List<Student>> fetchStudentsFromApi(String courseId) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$courseId/students'));
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$courseId/students'));
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = jsonDecode(response.body);
@@ -104,7 +103,7 @@ class CourseService {
 
   Future<void> removeCourse(String id) async {
     final response =
-        await http.delete(Uri.parse('${Endpoints.getCourseEndPoint()}/$id'));
+        await http.delete(Uri.parse('${Endpoints.getCourseEndPoint()}$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao deletar o curso');
@@ -112,7 +111,7 @@ class CourseService {
   }
 
   Future<int> fetchStudentsCourseCount(String courseId) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$courseId/students'));
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$courseId/students'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();

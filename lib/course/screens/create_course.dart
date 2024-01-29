@@ -26,6 +26,7 @@ class _CreateCourseState extends State<CreateCourse> {
               'Criando um curso',
               style: TextStyle(fontSize: 20),
             ),
+            SizedBox(height: 20),
             TextField(
               controller: _descriptionController,
               decoration: InputDecoration(
@@ -33,6 +34,7 @@ class _CreateCourseState extends State<CreateCourse> {
                 labelText: 'Descrição',
               ),
             ),
+            SizedBox(height: 20),
             TextField(
               controller: _syllabusController,
               decoration: InputDecoration(
@@ -40,6 +42,7 @@ class _CreateCourseState extends State<CreateCourse> {
                 labelText: 'Ementa',
               ),
             ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 final CreateCourseDTO newCourse = CreateCourseDTO(
@@ -47,7 +50,7 @@ class _CreateCourseState extends State<CreateCourse> {
                   syllabus: _syllabusController.text,
                 );
                 _courseStore.saveCourse(newCourse)
-                    .then((value) => Modular.to.navigate(AppRoutes.course));
+                    .then((value) => Modular.to.pushReplacementNamed(AppRoutes.course));
               },
               child: const Text('Create Course'),
             ),

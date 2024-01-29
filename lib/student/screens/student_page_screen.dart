@@ -75,10 +75,33 @@ class _StudentPageScreenState extends State<StudentPageScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            _studentStore
-                                .deleteStudent(_student.id.toString())
-                                .then((value) => Modular.to.navigate(
-                                    '${AppRoutes.student}/${widget.studentId}'));
+                            // Make an alert dialog to delete the student
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Deletar estudante'),
+                                  content: const Text(
+                                      'Tem certeza que deseja deletar o estudante?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Modular.to.pop();
+                                      },
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _studentStore
+                                            .deleteStudent(_student.id.toString())
+                                            .then((value) => Modular.to.pushReplacementNamed(AppRoutes.student));
+                                      },
+                                      child: const Text('Deletar'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           child: const Text('Deletar estudante'),
                         ),

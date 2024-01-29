@@ -39,6 +39,9 @@ class _CourseListWidgetState extends State<CourseListWidget> {
               return ListTile(
                   title: Text(course.description),
                   subtitle: Text(course.syllabus),
+                  trailing: course.students.length < 5
+                  ? Text('turma não fechada')
+                  : null,
                   onTap: () {
                     Modular.to.navigate('${AppRoutes.course}/${course.id}');
                   });

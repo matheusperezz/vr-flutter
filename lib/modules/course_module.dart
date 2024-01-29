@@ -14,10 +14,6 @@ class CourseModule extends Module {
 
   @override
   void routes(RouteManager r) {
-    r.child(AppRoutes.home, child: (contextx) => const HomeScreen());
-    r.child(AppRoutes.course, child: (_) => const CourseScreen());
-    r.child(AppRoutes.student, child: (contextx) => const StudentScreen());
-    r.child('${AppRoutes.course}/:id', child: (_) => CoursePageScreen(courseId: r.args.params['id'] as String));
     super.routes(r);
   }
 }

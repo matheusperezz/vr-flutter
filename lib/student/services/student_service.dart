@@ -23,7 +23,7 @@ class StudentService {
   Future<void> saveStudent(StudentDto student) async {
     String jsonStudent = json.encode(student.toMap());
     http.Response response = await http.post(
-        Uri.parse(Endpoints.getStudentEndPoint() + '/'),
+        Uri.parse(Endpoints.getStudentEndPoint()),
         body: jsonStudent,
         headers: {'Content-Type': 'application/json'});
     print('Student: $jsonStudent');
@@ -34,13 +34,13 @@ class StudentService {
 
   Future<void> updateStudent(Student student) async {
     String jsonStudent = json.encode(student.toMap());
-    http.put(Uri.parse('${Endpoints.getStudentEndPoint()}/${student.id}'),
+    http.put(Uri.parse('${Endpoints.getStudentEndPoint()}${student.id}'),
         body: jsonStudent, headers: {'Content-Type': 'application/json'});
   }
 
   Future<Student> fetchStudentById(String id) async {
     final response =
-        await http.get(Uri.parse('${Endpoints.getStudentEndPoint()}/$id'));
+        await http.get(Uri.parse('${Endpoints.getStudentEndPoint()}$id'));
 
     if (response.statusCode == 200) {
       return Student.fromJson(json.decode(response.body));
@@ -51,7 +51,7 @@ class StudentService {
 
   Future<void> deleteStudent(String id) async {
     final response =
-        await http.delete(Uri.parse('${Endpoints.getStudentEndPoint()}/$id'));
+        await http.delete(Uri.parse('${Endpoints.getStudentEndPoint()}$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao deletar o estudante');

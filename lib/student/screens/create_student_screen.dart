@@ -39,7 +39,7 @@ class _CreateStudentScreenState extends State<CreateStudentScreen> {
                 );
                 _studentStore
                     .saveStudent(newStudent)
-                    .then((value) => Modular.to.navigate(AppRoutes.student));
+                    .then((value) => Modular.to.pushReplacementNamed(AppRoutes.student));
               },
               child: const Text('Criar estudante'),
             ),
