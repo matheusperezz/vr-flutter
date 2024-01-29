@@ -46,12 +46,15 @@ class CourseService {
     }
   }
 
-  Future<List<Student>> fetchStudentsFromApi() async {
-    final response = await http.get(Uri.parse(Endpoints.getStudentEndPoint()));
+  Future<List<Student>> fetchStudentsFromApi(String courseId) async {
+    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}/$courseId/students'));
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = jsonDecode(response.body);
       final List<Student> students = responseData.map((data) => Student.fromJson(data)).toList();
+      for (var student in students){
+        print('Resposta nome api: ${student.name}');
+      }
       return students;
     } else {
       throw Exception('Failed to load students');
@@ -59,12 +62,11 @@ class CourseService {
   }
 
   Future<List<Student>> fetchAvailableStudentsFromApi() async {
-    final response =
-        await http.get(Uri.parse(Endpoints.getStudentEndPoint()));
+    final response = await http.get(Uri.parse(Endpoints.getStudentEndPoint()));
+
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      List<Student> students =
-          data.map((json) => Student.fromJson(json)).cast<Student>().toList();
+      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
       return students;
     } else {
       // Show the request error message in throw
@@ -72,7 +74,7 @@ class CourseService {
     }
   }
 
-  void addStudentToCourse(String courseId, Student student) async {
+  Future<void> addStudentToCourse(String courseId, Student student) async {
     int studentCode = student.id;
     int courseCode = int.parse(courseId);
     Class studentCourse =
@@ -82,6 +84,7 @@ class CourseService {
         body: jsonStudent);
     if (response.statusCode != 200) {
       // Show the response body
+      print('Erro ao adicionar estudante no curso ?');
       throw Exception('Erro: ${response.body}');
     }
   }
@@ -96,7 +99,7 @@ class CourseService {
     if (response.statusCode != 200) {
       throw Exception('Falha ao remover o estudante do curso');
     }
-    fetchStudentsFromApi();
+    fetchAvailableStudentsFromApi();
   }
 
   Future<void> removeCourse(String id) async {

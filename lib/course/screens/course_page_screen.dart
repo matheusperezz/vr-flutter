@@ -55,7 +55,8 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Modular.to.navigate(AppRoutes.course);
+                  // Cancel operations and go back to courses page
+                  Modular.to.pushReplacementNamed(AppRoutes.course);
                 },
               ),
             ),
@@ -87,49 +88,45 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                       itemBuilder: (context, index) {
                         final student = _course.students[index];
                         return ListTile(
-                          title: Text(student.name),
-                          onLongPress: () async {
-                            try {
-                              // make an alert dialog
-                              await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Remover aluno'),
-                                    content: Text(
-                                      'Deseja remover o aluno ${student.name} do curso?',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Modular.to.pop();
-                                        },
-                                        child: const Text('Cancelar'),
+                            title: Text(student.name),
+                            onLongPress: () async {
+                              try {
+                                // make an alert dialog
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Remover aluno'),
+                                      content: Text(
+                                        'Deseja remover o aluno ${student.name} do curso?',
                                       ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          await _courseStore.removeStudent(
-                                            widget.courseId,
-                                            student,
-                                          ).then((value) async {
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
                                             Modular.to.pop();
-                                            // Refresh the page
-                                            var course = await _courseStore.fetchCourseById(widget.courseId);
-                                            _courseStore.students = course.students;
-                                          });
-                                        },
-                                        child: const Text('Remover'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            } catch (e) {
-                              // TODO: Make an toast with error message
-                              print('Error: $e');
-                            }
-                          }
-                        );
+                                          },
+                                          child: const Text('Cancelar'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            Modular.to.pop();
+                                            await _courseStore.removeStudent(widget.courseId, student);
+                                            List<Student> students = await _courseStore.fetchStudentsFromCourse(widget.courseId);
+                                            setState(() {
+                                              _course.students = students;
+                                            });
+                                          },
+                                          child: const Text('Remover'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              } catch (e) {
+                                // TODO: Make an toast with error message
+                                print('Error: $e');
+                              }
+                            });
                       },
                     ),
                   ),
@@ -151,12 +148,13 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                           title: Text(student.name),
                           onTap: () async {
                             try {
-                              await _courseStore.addStudent(
-                                widget.courseId,
-                                student,
-                              );
+                              await _courseStore.addStudent(widget.courseId, student);
+                              List<Student> students = await _courseStore.fetchStudentsFromCourse(widget.courseId);
+                              setState(() {
+                                _course.students = students;
+                              });
+                              Modular.to.pop();
                             } catch (e) {
-                              // TODO: Make an toast with error message
                               print('Error: $e');
                             }
                           },
@@ -165,30 +163,40 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      _courseStore.updateCourse(_course).then((_) {
-                        Modular.to.navigate(AppRoutes.course);
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.deepPurple,
-                      onPrimary: Colors.white,
-                    ),
-                    child: const Text('Atualizar curso'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _courseStore.removeCourse(_course.id.toString()).then((_) {
-                        Modular.to.navigate(AppRoutes.course);
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
-                      onPrimary: Colors.white,
-                    ),
-                    child: const Text('Deletar curso'),
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _courseStore.updateCourse(_course).then((_) {
+                            Future.delayed(Duration.zero, () {
+                              Modular.to.pushReplacementNamed(AppRoutes.course);
+                            });
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.deepPurple,
+                          onPrimary: Colors.white,
+                        ),
+                        child: const Text('Atualizar curso'),
+                      ),
+                      const SizedBox(width: 18),
+                      ElevatedButton(
+                        onPressed: () {
+                          _courseStore
+                              .removeCourse(_course.id.toString())
+                              .then((_) {
+                            Modular.to.pop();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                          onPrimary: Colors.white,
+                        ),
+                        child: const Text('Deletar curso'),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

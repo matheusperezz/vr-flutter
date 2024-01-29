@@ -46,8 +46,7 @@ class _CreateCourseState extends State<CreateCourse> {
                   description: _descriptionController.text,
                   syllabus: _syllabusController.text,
                 );
-                _courseStore
-                    .saveCourse(newCourse)
+                _courseStore.saveCourse(newCourse)
                     .then((value) => Modular.to.navigate(AppRoutes.course));
               },
               child: const Text('Create Course'),

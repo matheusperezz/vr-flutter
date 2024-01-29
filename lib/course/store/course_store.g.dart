@@ -98,19 +98,20 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     return _$saveCourseAsyncAction.run(() => super.saveCourse(course));
   }
 
-  late final _$fetchStudentsAsyncAction =
-      AsyncAction('_CourseStoreBase.fetchStudents', context: context);
+  late final _$fetchStudentsFromCourseAsyncAction =
+      AsyncAction('_CourseStoreBase.fetchStudentsFromCourse', context: context);
 
   @override
-  Future<void> fetchStudents(String courseId) {
-    return _$fetchStudentsAsyncAction.run(() => super.fetchStudents(courseId));
+  Future<List<Student>> fetchStudentsFromCourse(String courseId) {
+    return _$fetchStudentsFromCourseAsyncAction
+        .run(() => super.fetchStudentsFromCourse(courseId));
   }
 
   late final _$fetchAvailableStudentsAsyncAction =
       AsyncAction('_CourseStoreBase.fetchAvailableStudents', context: context);
 
   @override
-  Future<void> fetchAvailableStudents() {
+  Future<List<Student>> fetchAvailableStudents() {
     return _$fetchAvailableStudentsAsyncAction
         .run(() => super.fetchAvailableStudents());
   }

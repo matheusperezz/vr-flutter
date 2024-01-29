@@ -56,25 +56,34 @@ class _StudentPageScreenState extends State<StudentPageScreen> {
                   children: [
                     TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nome',
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _studentStore.updateStudent(_student).then(
-                            (value) => Modular.to.navigate(AppRoutes.student));
-                      },
-                      child: const Text('Atualizar estudante'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _studentStore.deleteStudent(_student.id.toString()).then(
-                            (value) => Modular.to.navigate(AppRoutes.student));
-                      },
-                      child: const Text('Deletar estudante'),
-                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _studentStore.updateStudent(_student).then(
+                                (value) => Modular.to.navigate(
+                                    '${AppRoutes.student}/${widget.studentId}'));
+                          },
+                          child: const Text('Atualizar estudante'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            _studentStore
+                                .deleteStudent(_student.id.toString())
+                                .then((value) => Modular.to.navigate(
+                                    '${AppRoutes.student}/${widget.studentId}'));
+                          },
+                          child: const Text('Deletar estudante'),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

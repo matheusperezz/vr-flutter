@@ -40,7 +40,6 @@ class _CourseListWidgetState extends State<CourseListWidget> {
                   title: Text(course.description),
                   subtitle: Text(course.syllabus),
                   onTap: () {
-                    print('route: ${AppRoutes.course} arguments: ${course.id}');
                     Modular.to.navigate('${AppRoutes.course}/${course.id}');
                   });
             },
