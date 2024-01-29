@@ -10,7 +10,7 @@ class StudentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
+        body: const Center(
           child: StudentListWidget(),
         ),
         // make a floating action button that have a text aside of a add icon
@@ -18,6 +18,7 @@ class StudentScreen extends StatelessWidget {
           onPressed: () {
             Modular.to.navigate(AppRoutes.createStudent);
           },
+          key: Key('adicionarEstudante'),
           label: const Text('Adicionar'),
           icon: const Icon(Icons.add),
         )

@@ -27,6 +27,7 @@ class _StudentListWidgetState extends State<StudentListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        key: const Key('studentScreen'),
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
