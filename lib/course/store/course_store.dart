@@ -76,10 +76,4 @@ abstract class _CourseStoreBase with Store {
     await _courseService.removeCourse(id);
     fetchCourses();
   }
-
-  @action
-  Future<int> fetchStudentCourses(String courseId) async {
-    final int fetchedStudentCourses = await _courseService.fetchStudentsCourseCount(courseId);
-    return fetchedStudentCourses;
-  }
 }

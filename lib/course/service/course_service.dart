@@ -8,7 +8,7 @@ import '../../_core/models/course.dart';
 
 class CourseService {
   Future<List<Course>> fetchCourses() async {
-    final response = await http.get(Uri.parse(Endpoints.baseUrl + Endpoints.courses));
+    final response = await http.get(Uri.parse(Endpoints.getCourseEndPoint()));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -31,12 +31,12 @@ class CourseService {
 
   Future<void> updateCourse(Course course) async {
     String jsonCourse = json.encode(course.toMap());
-    http.put(Uri.parse('${Endpoints.getCourseEndPoint()}/${course.id}'),
+    http.put(Uri.parse(Endpoints.getCourseByIdEndpoint(course.id.toString())),
         body: jsonCourse, headers: {'Content-Type': 'application/json'});
   }
 
   Future<Course> fetchCourseById(String id) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$id'));
+    final response = await http.get(Uri.parse(Endpoints.getCourseByIdEndpoint(id)));
 
     if (response.statusCode == 200) {
       return Course.fromJson(json.decode(response.body));
@@ -46,7 +46,7 @@ class CourseService {
   }
 
   Future<List<Student>> fetchStudentsFromApi(String courseId) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$courseId/students'));
+    final response = await http.get(Uri.parse(Endpoints.getStudentsByCourseIdEndpoint(courseId)));
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = jsonDecode(response.body);
@@ -103,21 +103,21 @@ class CourseService {
 
   Future<void> removeCourse(String id) async {
     final response =
-        await http.delete(Uri.parse('${Endpoints.getCourseEndPoint()}$id'));
+        await http.delete(Uri.parse(Endpoints.getCourseByIdEndpoint(id)));
 
     if (response.statusCode != 200) {
       throw Exception('Falha ao deletar o curso');
     }
   }
 
-  Future<int> fetchStudentsCourseCount(String courseId) async {
-    final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$courseId/students'));
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
-      return students.length;
-    } else {
-      throw Exception('Falha ao carregar o número de estudantes do curso');
-    }
-  }
+  // Future<int> fetchStudentsCourseCount(String courseId) async {
+  //   final response = await http.get(Uri.parse('${Endpoints.getCourseEndPoint()}$courseId/students'));
+  //   if (response.statusCode == 200) {
+  //     List<dynamic> data = json.decode(response.body);
+  //     List<Student> students = data.map((json) => Student.fromJson(json)).cast<Student>().toList();
+  //     return students.length;
+  //   } else {
+  //     throw Exception('Falha ao carregar o número de estudantes do curso');
+  //   }
+  // }
 }

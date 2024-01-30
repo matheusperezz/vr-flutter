@@ -15,4 +15,16 @@ class Endpoints {
   static String getCourseStudentEndPoint(){
     return '$baseUrl$courseStudent';
   }
+
+  static String getCourseByIdEndpoint(String id){
+    return '$baseUrl$courses$id';
+  }
+
+  static String getStudentsByCourseIdEndpoint(String courseId){
+    return '$baseUrl$courses$courseId$students';
+  }
+
+  static String getCoursesFromAStudentEndpoint(String studentId){
+    return '$baseUrl$students$studentId$courses';
+  }
 }

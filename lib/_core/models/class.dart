@@ -1,5 +1,3 @@
-import 'package:vr_application/_core/models/student.dart';
-
 class Class {
   final int studentCode;
   final int courseCode;

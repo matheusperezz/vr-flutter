@@ -5,7 +5,10 @@ import 'package:vr_application/_core/routes_names.dart';
 import 'modules/app_module.dart';
 
 void main() {
-  return runApp(ModularApp(module: AppModule(), child: MyApp(),));
+  return runApp(ModularApp(
+    module: AppModule(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -46,36 +49,27 @@ class _MyAppState extends State<MyApp> {
                   onTap: () {
                     Modular.to.navigate(AppRoutes.home);
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Início',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _iconLabel('Home', Icons.home),
                   ),
                 ),
                 InkWell(
                   onTap: () {
                     Modular.to.navigate(AppRoutes.student);
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Estudantes',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _iconLabel('Estudantes', Icons.people),
                   ),
                 ),
                 InkWell(
                   onTap: () {
                     Modular.to.navigate(AppRoutes.course);
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Cursos',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _iconLabel('Cursos', Icons.book),
                   ),
                 ),
               ],
@@ -87,6 +81,16 @@ class _MyAppState extends State<MyApp> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget? _iconLabel(String label, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.white),
+        const SizedBox(width: 10.0),
+        Text(label, style: const TextStyle(color: Colors.white),),
+      ],
     );
   }
 }

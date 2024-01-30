@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:vr_application/_core/models/course.dart';
 import 'package:vr_application/_core/routes_names.dart';
 import 'package:vr_application/course/store/course_store.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:vr_application/student/widgets/students_lists.dart';
 
 import '../../_core/models/student.dart';
 
@@ -18,9 +18,10 @@ class CoursePageScreen extends StatefulWidget {
 }
 
 class _CoursePageScreenState extends State<CoursePageScreen> {
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _syllabusController = TextEditingController();
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _syllabusController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  List<Student> _filteredStudents = [];
   final CourseStore _courseStore = CourseStore();
   late Future<Course> _courseFuture;
   late Course _course;
@@ -30,7 +31,9 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
     super.initState();
     _courseFuture = _courseStore.fetchCourseById(widget.courseId);
     _courseStore.fetchAvailableStudents().then((value) {
-      setState(() {});
+      setState(() {
+        _filteredStudents = _courseStore.studentsAvailable;
+      });
     });
   }
 
@@ -86,7 +89,26 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: _searchController,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      setState(() {
+                        _filteredStudents = _courseStore.studentsAvailable
+                            .where((student) {
+                          final searchTextWords = value
+                              .toLowerCase()
+                              .replaceAll(RegExp(r'[^\w\s]+'), '')
+                              .split(' ');
+                          final studentNameWords = student.name
+                              .toLowerCase()
+                              .replaceAll(RegExp(r'[^\w\s]+'), '')
+                              .split(' ');
+                          return searchTextWords.every((word) {
+                            return studentNameWords.any((studentWord) {
+                              return studentWord.contains(word);
+                            });
+                          });
+                        }).toList();
+                      });
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Pesquisar Alunos',
@@ -126,7 +148,7 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                       return AlertDialog(
                         title: const Text('Remover aluno'),
                         content: Text(
-                          'Deseja remover o aluno ${student.name} do curso?',
+                          'Deseja remover o aluno ${student.name} do curso ${_course.description} ?',
                         ),
                         actions: [
                           TextButton(
@@ -153,8 +175,11 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
                     },
                   );
                 } catch (e) {
-                  // TODO: Make an toast with error message
-                  print('Error: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro: $e'),
+                    ),
+                  );
                 }
               });
         },
@@ -164,23 +189,31 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
 
   Expanded availableStudentList() {
     return Expanded(
-      child: ListView.builder(
-        itemCount: _courseStore.studentsAvailable.length,
-        itemBuilder: (context, index) {
-          final student = _courseStore.studentsAvailable[index];
-          return ListTile(
-            title: Text(student.name),
-            onTap: () async {
-              try {
-                await _courseStore.addStudent(widget.courseId, student);
-                List<Student> students =
+      child: Observer(
+        builder: (context){
+          return ListView.builder(
+            itemCount: _filteredStudents.length,
+            itemBuilder: (context, index) {
+              final student = _filteredStudents[index];
+              return ListTile(
+                title: Text(student.name),
+                onTap: () async {
+                  try {
+                    await _courseStore.addStudent(widget.courseId, student);
+                    List<Student> students =
                     await _courseStore.fetchStudentsFromCourse(widget.courseId);
-                setState(() {
-                  _course.students = students;
-                });
-              } catch (e) {
-                print('Error: $e');
-              }
+                    setState(() {
+                      _course.students = students;
+                    });
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erro: $e'),
+                      ),
+                    );
+                  }
+                },
+              );
             },
           );
         },
@@ -195,30 +228,52 @@ class _CoursePageScreenState extends State<CoursePageScreen> {
         ElevatedButton(
           onPressed: () {
             _courseStore.updateCourse(_course).then((_) {
-              // Print all navigation stack
-              Modular.to.navigate(AppRoutes.course);
+              Modular.to.pushReplacementNamed(AppRoutes.course);
             });
           },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.deepPurple,
-            onPrimary: Colors.white,
-          ),
           child: const Text('Atualizar curso'),
         ),
         const SizedBox(width: 18),
         ElevatedButton(
           onPressed: () {
-            _courseStore.removeCourse(_course.id.toString()).then((_) {
-              Modular.to.pop();
-            });
+            _showDeleteDialog(context);
           },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.red,
-            onPrimary: Colors.white,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.red),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
           ),
           child: const Text('Deletar curso'),
         ),
       ],
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Deletar curso'),
+          content: const Text(
+              'Tem certeza que deseja deletar este curso?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Modular.to.pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                _courseStore
+                    .removeCourse(_course.id.toString())
+                    .then((value) => Modular.to.pushReplacementNamed(AppRoutes.course));
+              },
+              child: const Text('Deletar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

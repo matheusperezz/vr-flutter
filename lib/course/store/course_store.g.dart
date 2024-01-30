@@ -133,15 +133,6 @@ mixin _$CourseStore on _CourseStoreBase, Store {
     return _$removeCourseAsyncAction.run(() => super.removeCourse(id));
   }
 
-  late final _$fetchStudentCoursesAsyncAction =
-      AsyncAction('_CourseStoreBase.fetchStudentCourses', context: context);
-
-  @override
-  Future<int> fetchStudentCourses(String courseId) {
-    return _$fetchStudentCoursesAsyncAction
-        .run(() => super.fetchStudentCourses(courseId));
-  }
-
   @override
   String toString() {
     return '''

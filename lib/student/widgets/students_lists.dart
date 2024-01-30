@@ -42,60 +42,64 @@ class _StudentListWidgetState extends State<StudentListWidget> {
               ),
             ),
           ),
-          Expanded(
-            child: Observer(
-              builder: (BuildContext context) {
-                if (_studentStore.students.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final filteredStudents = _studentStore.students.where((student) {
-                  if (_searchText.isEmpty) {
-                    return true;
-                  }
-
-                  final searchTextWords = _searchText
-                      .toLowerCase()
-                      .replaceAll(new RegExp(r'[^\w\s]+'), '')
-                      .split(' ');
-
-                  final studentNameWords = student.name
-                      .toLowerCase()
-                      .replaceAll(new RegExp(r'[^\w\s]+'), '')
-                      .split(' ');
-
-                  return searchTextWords.every((word) {
-                    return studentNameWords.any((studentWord) {
-                      return studentWord.contains(word);
-                    });
-                  });
-                }).toList();
-
-                if (filteredStudents.isEmpty) {
-                  return const Center(
-                    child: Text('Nenhum registro foi encontrado'),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: filteredStudents.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final student = filteredStudents[index];
-                    return ListTile(
-                        title: Text(student.name),
-                        subtitle: Text('Certamente um aluno'),
-                        onTap: () {
-                          Modular.to.navigate('${AppRoutes.student}/${student.id}');
-                        });
-                  },
-                );
-              },
-            ),
-          ),
+          ObservableStudentList(),
         ],
       ),
     );
+  }
+
+  Expanded ObservableStudentList() {
+    return Expanded(
+          child: Observer(
+            builder: (BuildContext context) {
+              if (_studentStore.students.isEmpty) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              final filteredStudents = _studentStore.students.where((student) {
+                if (_searchText.isEmpty) {
+                  return true;
+                }
+
+                final searchTextWords = _searchText
+                    .toLowerCase()
+                    .replaceAll(new RegExp(r'[^\w\s]+'), '')
+                    .split(' ');
+
+                final studentNameWords = student.name
+                    .toLowerCase()
+                    .replaceAll(new RegExp(r'[^\w\s]+'), '')
+                    .split(' ');
+
+                return searchTextWords.every((word) {
+                  return studentNameWords.any((studentWord) {
+                    return studentWord.contains(word);
+                  });
+                });
+              }).toList();
+
+              if (filteredStudents.isEmpty) {
+                return const Center(
+                  child: Text('Nenhum registro foi encontrado'),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: filteredStudents.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final student = filteredStudents[index];
+                  return ListTile(
+                      title: Text(student.name),
+                      subtitle: Text('Certamente um aluno'),
+                      onTap: () {
+                        Modular.to.navigate('${AppRoutes.student}/${student.id}');
+                      });
+                },
+              );
+            },
+          ),
+        );
   }
 }

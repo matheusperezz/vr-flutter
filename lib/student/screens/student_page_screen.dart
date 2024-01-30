@@ -87,7 +87,6 @@ class _StudentDetailsState extends State<StudentDetails> {
 
   Row _buildButtons(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton(
           onPressed: () {
