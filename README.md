@@ -11,7 +11,7 @@ Este é um projeto flutter para Desktop, que se concentra em adicionar estudante
 ## Previews
 
 <div>
-    <img src="https://github.com/matheusperezz/vr_application/.source/gif_project.gif" alt="Projeto vr_application rodando e demonstrando uma criação de curso, aluno e adicionando um aluno a um curso" width="700px" />
+    <img src="https://github.com/matheusperezz/vr-flutter/blob/main/.source/gif_project.gif" alt="Projeto vr_application rodando e demonstrando uma criação de curso, aluno e adicionando um aluno a um curso" width="700px" />
 </div>
 
 ## Melhorias
