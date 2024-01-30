@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 InkWell(
                   onTap: () {
+                    print('Currentroute: ${AppRoutes.student}');
                     Modular.to.navigate(AppRoutes.student);
                   },
                   child: Padding(
@@ -89,7 +90,10 @@ class _MyAppState extends State<MyApp> {
       children: [
         Icon(icon, color: Colors.white),
         const SizedBox(width: 10.0),
-        Text(label, style: const TextStyle(color: Colors.white),),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white),
+        ),
       ],
     );
   }
